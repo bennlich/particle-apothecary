@@ -284,6 +284,22 @@ end
 
 ;-------------helper functions
 
+to-report fermionDensity
+  ifelse totalMeasurements = 0
+    [report 0]
+    [report (totalFermionsAndLeptons / totalMeasurements)]
+end
+
+to-report energyDensity
+  ifelse totalMeasurements = 0
+    [report 0]
+    [report (totalEnergy / totalMeasurements)]
+end
+
+to-report totalEnergy
+  report sum [energy] of photons
+end
+
 to-report totalFermionsAndLeptons
   report count (turtle-set quarks antiquarks electrons positrons neutrinos antineutrinos electrons positrons)
 end
@@ -878,7 +894,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -13345367 true "" "plot sum [energy] of photons"
+"default" 1.0 0 -13345367 true "" "plot totalEnergy"
 
 SLIDER
 15
