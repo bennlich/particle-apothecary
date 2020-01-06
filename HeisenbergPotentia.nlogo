@@ -31,7 +31,7 @@ to setup
   set maxInteger 99999999
   set measurementsList []
   set measurementsTicksList []
-  set version "0026"
+  set version "0027"
  ; import-drawing "legend.png"
   set-shapes
   if autoRandom? [set randomSeed random 9999]
@@ -620,7 +620,7 @@ randomSeed
 randomSeed
 1
 10000
-3.0
+9687.0
 1
 1
 NIL
@@ -695,7 +695,7 @@ R
 R
 0
 1
-0.1
+0.03
 .01
 1
 q-aq transformation
@@ -725,7 +725,7 @@ A
 A
 0
 1
-1.0
+0.99
 .01
 1
 annihilate**>  color
@@ -740,7 +740,7 @@ B
 B
 0
 1
-1.0
+0.08
 .01
 1
 quark color create
@@ -755,7 +755,7 @@ C
 C
 0
 1
-1.0
+0.42
 .01
 1
 photons-> q-aq
@@ -770,7 +770,7 @@ G
 G
 0
 1
-1.0
+0.44
 .01
 1
 quark antiquark
@@ -785,7 +785,7 @@ H
 H
 0
 1
-1.0
+0.55
 .01
 1
 neutrino positron
@@ -800,7 +800,7 @@ I
 I
 0
 1
-1.0
+0.55
 .01
 1
 electron antineutrino
@@ -905,7 +905,7 @@ RM
 RM
 0
 1
-0.93
+0.83
 .01
 1
 NIL
@@ -1142,7 +1142,7 @@ O
 O
 0
 1
-0.07
+0.08
 .01
 1
 NIL
@@ -1267,15 +1267,15 @@ PLOT
 620
 810
 histogram photon energy
-NIL
-NIL
+bins
+total energy
 0.0
 10.0
 0.0
 10.0
 true
 false
-"" "if count photons > 0 [\n  ; set-plot-x-range ((min [energy] of photons) - 1) ((max [energy] of photons) + 1)\n  set-plot-x-range 10 6000\n  set-histogram-num-bars 100\n]"
+"" "if count photons > 0 [\n  ; set-plot-x-range ((min [energy] of photons) - 1) ((max [energy] of photons) + 1)\n  set-plot-x-range 10 10000\n  set-histogram-num-bars 1000\n]"
 PENS
 "default" 1.0 1 -16777216 true "" "histogram [energy] of photons"
 
@@ -1301,7 +1301,7 @@ fermions / measurement
 0.0
 10.0
 0.0
-10.0
+2.0
 true
 false
 "" ""
