@@ -905,7 +905,7 @@ RM
 RM
 0
 1
-0.95
+0.93
 .01
 1
 NIL
@@ -1157,17 +1157,17 @@ P
 P
 0
 1
-0.08
+0.29
 .01
 1
 NIL
 HORIZONTAL
 
 MONITOR
-875
-35
-932
-80
+1515
+10
+1572
+55
 version
 version
 17
@@ -1196,7 +1196,7 @@ SWITCH
 268
 useProportional?
 useProportional?
-1
+0
 1
 -1000
 
@@ -1262,10 +1262,10 @@ powerRSquared
 11
 
 PLOT
-315
-495
-617
-622
+220
+630
+620
+810
 histogram photon energy
 NIL
 NIL
@@ -1289,6 +1289,59 @@ lockItoH?
 0
 1
 -1000
+
+PLOT
+220
+495
+420
+630
+fermion density
+ticks
+fermions / measurement
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"fermionDensity" 1.0 0 -16777216 true "" "plot fermionDensity"
+
+PLOT
+420
+495
+620
+630
+energy density
+ticks
+total energy / measurements
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot energyDensity"
+
+BUTTON
+145
+40
+207
+73
+step
+go
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
 
 @#$#@#$#@
 ## WHAT IS IT?
