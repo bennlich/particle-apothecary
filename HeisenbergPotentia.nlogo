@@ -1,6 +1,7 @@
 extensions [matrix]
 globals [totalMeasurements measurementsList measurementsTicksList temp maxInteger version
-         expSlope expRSquared  powerSlope powerRSquared]
+         expSlope expRSquared  powerSlope powerRSquared
+         EnergyDensityHistory fermionDensityHistory]
 
 patches-own [particleDensity antiParticleDensity]
 
@@ -31,7 +32,9 @@ to setup
   set maxInteger 99999999
   set measurementsList []
   set measurementsTicksList []
-  set version "0027"
+  set fermionDensityHistory []
+  set energyDensityHistory []
+  set version "0028"
  ; import-drawing "legend.png"
   set-shapes
   if autoRandom? [set randomSeed random 9999]
@@ -57,7 +60,10 @@ to go
   if visualizeSpaceTime? [visualize-space-time]
   if totalMeasurements > 0 [
     set measurementsList lput totalMeasurements  measurementsList
-    set measurementsTicksList lput ticks measurementsTicksList]
+    set measurementsTicksList lput ticks measurementsTicksList
+    set fermionDensityHistory lput fermionDensity fermionDensityHistory
+    set energyDensityHistory lput energyDensity energyDensityHistory
+]
   if ticks > 0 and ticks mod 5 = 0 [fitTrendlines]
 end
 
@@ -419,7 +425,7 @@ k
 k
 0
 4
-1.0
+0.0
 .01
 1
 NIL
@@ -594,7 +600,7 @@ K
 K
 0
 1
-1.0
+0.0
 .01
 1
 NIL
@@ -620,7 +626,7 @@ randomSeed
 randomSeed
 1
 10000
-9687.0
+5474.0
 1
 1
 NIL
@@ -815,7 +821,7 @@ K
 K
 0
 1
-1.0
+0.0
 .01
 1
 positron electron annihilation
@@ -1164,10 +1170,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-1515
-10
-1572
-55
+12
+732
+69
+777
 version
 version
 17
@@ -1262,10 +1268,10 @@ powerRSquared
 11
 
 PLOT
-220
-630
 620
-810
+815
+935
+990
 histogram photon energy
 bins
 total energy
@@ -1275,7 +1281,7 @@ total energy
 10.0
 true
 false
-"" "if count photons > 0 [\n  ; set-plot-x-range ((min [energy] of photons) - 1) ((max [energy] of photons) + 1)\n  set-plot-x-range 10 10000\n  set-histogram-num-bars 1000\n]"
+"" "if count photons > 0 [\n  ; set-plot-x-range ((min [energy] of photons) - 1) ((max [energy] of photons) + 1)\n  set-plot-x-range 10 10000\n  set-histogram-num-bars 100\n]"
 PENS
 "default" 1.0 1 -16777216 true "" "histogram [energy] of photons"
 
@@ -1342,6 +1348,42 @@ NIL
 NIL
 NIL
 1
+
+PLOT
+220
+629
+420
+779
+FermionDensity Histogram
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" " if length fermionDensityHistory > 0\n  [ set-plot-x-range 0 max fermionDensityHistory ]\n set-histogram-num-bars 20"
+PENS
+"default" 1.0 1 -16777216 true "" "histogram fermionDensityHistory"
+
+PLOT
+420
+629
+620
+779
+Energy Density Histogram
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" " if length energyDensityHistory > 0 and max energyDensityHistory > 0\n  [ set-plot-x-range 0 max energyDensityHistory ]\n set-histogram-num-bars 20"
+PENS
+"default" 1.0 1 -16777216 true "" "histogram energyDensityHistory"
 
 @#$#@#$#@
 ## WHAT IS IT?
