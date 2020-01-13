@@ -1,6 +1,9 @@
 extensions [matrix]
 globals [totalMeasurements measurementsList measurementsTicksList temp maxInteger version
-         expSlope expRSquared  powerSlope powerRSquared]
+         expSlope expRSquared  powerSlope powerRSquared
+         fermionDensityExpSlope FermionDensityexpRSquared fermionDensityPowerSlope FermionDensityPowerRSquared
+         energyDensityExpSlope energyDensityexpRSquared energyDensityPowerSlope energyDensityPowerRSquared
+         EnergyDensityHistory fermionDensityHistory]
 
 patches-own [particleDensity antiParticleDensity]
 
@@ -31,7 +34,9 @@ to setup
   set maxInteger 99999999
   set measurementsList []
   set measurementsTicksList []
-  set version "0027"
+  set fermionDensityHistory []
+  set energyDensityHistory []
+  set version "0029"
  ; import-drawing "legend.png"
   set-shapes
   if autoRandom? [set randomSeed random 9999]
@@ -57,7 +62,10 @@ to go
   if visualizeSpaceTime? [visualize-space-time]
   if totalMeasurements > 0 [
     set measurementsList lput totalMeasurements  measurementsList
-    set measurementsTicksList lput ticks measurementsTicksList]
+    set measurementsTicksList lput ticks measurementsTicksList
+    set fermionDensityHistory lput fermionDensity fermionDensityHistory
+    set energyDensityHistory lput energyDensity energyDensityHistory
+]
   if ticks > 0 and ticks mod 5 = 0 [fitTrendlines]
 end
 
@@ -252,13 +260,13 @@ to visualize-space-time
 end
 
 to-report regress-exponential [data-list indep-var]
- set data-list  (map [x -> log x 10] data-list)
+ set data-list  (map [x ->  ifelse-value (x = 0) [0] [log x 10]] data-list)
  report  matrix:regress matrix:from-column-list (list data-list indep-var)
 end
 
 to-report regress-power [data-list indep-var]
-  set data-list  (map [x -> log x 10] data-list)
-  set indep-var  (map [x -> log x 10] indep-var)
+  set data-list  (map [x -> ifelse-value (x = 0) [0] [log x 10]] data-list)
+  set indep-var  (map [x -> ifelse-value (x = 0) [0] [log x 10]] indep-var)
   report  matrix:regress matrix:from-column-list (list data-list indep-var)
 end
 
@@ -279,6 +287,33 @@ to fitTrendlines
   set powerRSquared item 0 (item 1 fit)
   set powerSlope item 1 (item 0 fit)
   plotxy 0 powerConstant  plotxy log ticks 10 powerSlope * log ticks 10 + powerConstant
+
+  let histNumBars 7
+
+  let aHistogram calc-histogram fermionDensityHistory histNumBars
+  set fit regress-power (map [anItem -> item 1 anItem] aHistogram) (map [anItem -> item 0 anItem] aHistogram)
+  set powerConstant item 0 (item 0 fit)
+  set fermionDensityPowerRSquared item 0 (item 1 fit)
+  set fermionDensityPowerSlope item 1 (item 0 fit)
+
+  set aHistogram calc-histogram fermionDensityHistory histNumBars
+  set fit regress-exponential (map [anItem -> item 1 anItem] aHistogram) (map [anItem -> item 0 anItem] aHistogram)
+  set expConstant item 0 (item 0 fit)
+  set fermionDensityExpRSquared item 0 (item 1 fit)
+  set fermionDensityExpSlope item 1 (item 0 fit)
+
+  set aHistogram calc-histogram energyDensityHistory histNumBars
+  set fit regress-power (map [anItem -> item 1 anItem] aHistogram) (map [anItem -> item 0 anItem] aHistogram)
+  set powerConstant item 0 (item 0 fit)
+  set energyDensityPowerRSquared item 0 (item 1 fit)
+  set energyDensityPowerSlope item 1 (item 0 fit)
+
+  set aHistogram calc-histogram energyDensityHistory histNumBars
+  set fit regress-exponential (map [anItem -> item 1 anItem] aHistogram) (map [anItem -> item 0 anItem] aHistogram)
+  set expConstant item 0 (item 0 fit)
+  set energyDensityExpRSquared item 0 (item 1 fit)
+  set energyDensityExpSlope item 1 (item 0 fit)
+
 end
 
 
@@ -288,6 +323,25 @@ to-report fermionDensity
   ifelse totalMeasurements = 0
     [report 0]
     [report (totalFermionsAndLeptons / totalMeasurements)]
+end
+
+to-report calc-histogram [ aList numBars ]
+  let minValue min aList
+  let maxValue max aList + .01
+  let interval (maxValue - minValue) / numBars
+  ;let hist n-values numBars [[]]
+  let hist []
+  let anIndex 0
+  repeat numBars [
+    let lowerBound minValue + anIndex * interval
+    let upperbound lowerbound + interval
+    let x (lowerBound + upperBound) / 2
+    let y length filter [ anItem -> anItem >= lowerBound and anItem < upperBound] aList
+    set hist lput (list x y ) hist
+    set anIndex anIndex + 1
+  ]
+
+  report hist
 end
 
 to-report energyDensity
@@ -419,7 +473,7 @@ k
 k
 0
 4
-1.0
+0.0
 .01
 1
 NIL
@@ -594,7 +648,7 @@ K
 K
 0
 1
-1.0
+0.0
 .01
 1
 NIL
@@ -620,7 +674,7 @@ randomSeed
 randomSeed
 1
 10000
-9687.0
+5474.0
 1
 1
 NIL
@@ -815,7 +869,7 @@ K
 K
 0
 1
-1.0
+0.0
 .01
 1
 positron electron annihilation
@@ -1164,10 +1218,10 @@ NIL
 HORIZONTAL
 
 MONITOR
-1515
-10
-1572
-55
+12
+732
+69
+777
 version
 version
 17
@@ -1240,7 +1294,7 @@ expRSquared
 11
 
 MONITOR
-225
+222
 450
 302
 495
@@ -1262,10 +1316,10 @@ powerRSquared
 11
 
 PLOT
-220
-630
 620
-810
+815
+935
+990
 histogram photon energy
 bins
 total energy
@@ -1275,7 +1329,7 @@ total energy
 10.0
 true
 false
-"" "if count photons > 0 [\n  ; set-plot-x-range ((min [energy] of photons) - 1) ((max [energy] of photons) + 1)\n  set-plot-x-range 10 10000\n  set-histogram-num-bars 1000\n]"
+"" "if count photons > 0 [\n  ; set-plot-x-range ((min [energy] of photons) - 1) ((max [energy] of photons) + 1)\n  set-plot-x-range 10 10000\n  set-histogram-num-bars 100\n]"
 PENS
 "default" 1.0 1 -16777216 true "" "histogram [energy] of photons"
 
@@ -1342,6 +1396,130 @@ NIL
 NIL
 NIL
 1
+
+PLOT
+220
+629
+420
+779
+FermionDensity Histogram
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" " if length fermionDensityHistory > 0\n  [ set-plot-x-range 0 max fermionDensityHistory ]\n set-histogram-num-bars 15"
+PENS
+"default" 1.0 1 -16777216 true "" "histogram  fermionDensityHistory"
+
+PLOT
+420
+629
+620
+779
+Energy Density Histogram
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" " if length energyDensityHistory > 0 and max energyDensityHistory > 0\n  [ set-plot-x-range 0 max energyDensityHistory ]\n set-histogram-num-bars 15"
+PENS
+"default" 1.0 1 -16777216 true "" "histogram energyDensityHistory"
+
+MONITOR
+220
+780
+320
+825
+powerSlope
+fermionDensityPowerSlope
+3
+1
+11
+
+MONITOR
+320
+780
+420
+825
+powerRSquared
+fermionDensityPowerRSquared
+3
+1
+11
+
+MONITOR
+220
+825
+320
+870
+expSlope
+fermionDensityExpSlope
+3
+1
+11
+
+MONITOR
+320
+825
+420
+870
+expRSquared
+fermionDensityExpRSquared
+3
+1
+11
+
+MONITOR
+420
+780
+515
+825
+powerSlope
+energyDensityPowerSlope
+3
+1
+11
+
+MONITOR
+515
+780
+620
+825
+powerRSquared
+energyDensityPowerRSquared
+3
+1
+11
+
+MONITOR
+420
+825
+515
+870
+expSlope
+energyDensityExpSlope
+3
+1
+11
+
+MONITOR
+515
+825
+620
+870
+expRSquared
+energyDensityExpRSquared
+3
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
